@@ -1,0 +1,254 @@
+/* ── Reset & Base ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --black: #000000;
+  --white: #F5F5F5;
+  --accent: #FF3333;
+  --border: 3px solid var(--black);
+  --font: 'Inter', 'SF Mono', 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+/* ── Container ── */
+.container {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ── Header ── */
+.header {
+  text-align: center;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ── Panel ── */
+.panel {
+  border: var(--border);
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.05s;
+  position: relative;
+}
+
+.panel--idle {
+  background: var(--white);
+}
+
+.panel--waiting {
+  background: var(--black);
+  cursor: wait;
+}
+
+.panel--ready {
+  background: var(--accent);
+  cursor: pointer;
+}
+
+.panel--result {
+  background: var(--white);
+}
+
+.panel--false-start {
+  background: var(--black);
+}
+
+.panel-content {
+  text-align: center;
+  padding: 2rem;
+}
+
+.panel-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.panel--waiting .panel-text,
+.panel--false-start .panel-text {
+  color: var(--white);
+}
+
+.panel--ready .panel-text {
+  color: var(--black);
+}
+
+.panel-result {
+  font-size: 4.5rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-top: 0.5rem;
+  letter-spacing: -3px;
+}
+
+.panel-result:empty {
+  display: none;
+}
+
+/* ── Controls ── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn {
+  flex: 1;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: var(--font);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: var(--black);
+  color: var(--white);
+  border: var(--border);
+  cursor: pointer;
+  transition: transform 0.08s, background 0.08s, color 0.08s;
+}
+
+.btn:hover {
+  background: var(--white);
+  color: var(--black);
+  transform: translate(2px, 2px);
+}
+
+.btn:active {
+  transform: translate(0, 0);
+}
+
+.best-score {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+/* ── Leaderboard ── */
+.leaderboard {
+  border: var(--border);
+  padding: 1.5rem;
+}
+
+.leaderboard-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: var(--border);
+}
+
+.leaderboard-list {
+  list-style: none;
+  counter-reset: rank;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  border: 2px solid var(--black);
+  font-weight: 600;
+  counter-increment: rank;
+}
+
+.leaderboard-item::before {
+  content: counter(rank) ".";
+  font-weight: 900;
+  margin-right: 0.75rem;
+  min-width: 1.5rem;
+}
+
+.leaderboard-name {
+  flex: 1;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.leaderboard-time {
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: -0.5px;
+}
+
+.leaderboard-item--you {
+  background: var(--accent);
+  border-color: var(--black);
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.5;
+  padding-top: 0.5rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .title {
+    font-size: 2.25rem;
+  }
+
+  .panel {
+    min-height: 200px;
+  }
+
+  .panel-result {
+    font-size: 3.5rem;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}

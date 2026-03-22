@@ -54,7 +54,7 @@ function setState(newState) {
 
   switch (newState) {
     case State.IDLE:
-      panelText.textContent = 'Click to start';
+      panelText.textContent = 'Click button below to start';
       startBtn.textContent = 'Start';
       break;
     case State.WAITING:

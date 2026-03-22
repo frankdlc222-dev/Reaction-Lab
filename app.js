@@ -19,28 +19,31 @@ const startBtn = document.getElementById('startBtn');
 const bestScoreEl = document.getElementById('bestScore');
 const leaderboardList = document.getElementById('leaderboardList');
 
-// ── Mock Leaderboard Data ──
-const mockPlayers = [
-  { name: 'SpeedDemon', time: 187 },
-  { name: 'FlashFingers', time: 203 },
-  { name: 'QuickDraw', time: 221 },
-  { name: 'Blinker', time: 245 },
-  { name: 'SlowPoke', time: 312 },
-];
-
 // ── Local Storage ──
-function getBestScore() {
-  const val = localStorage.getItem('reactionlab-best');
-  return val ? parseInt(val, 10) : null;
+const STORAGE_KEY = 'reactionlab-times';
+
+function getTopTimes() {
+  const val = localStorage.getItem(STORAGE_KEY);
+  if (!val) return [];
+  try {
+    return JSON.parse(val);
+  } catch {
+    return [];
+  }
 }
 
-function setBestScore(ms) {
-  const current = getBestScore();
-  if (current === null || ms < current) {
-    localStorage.setItem('reactionlab-best', ms);
-    return true;
-  }
-  return false;
+function addTime(ms) {
+  const times = getTopTimes();
+  times.push(ms);
+  times.sort((a, b) => a - b);
+  const top5 = times.slice(0, 5);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(top5));
+  return top5[0] === ms && (times.length === 1 || top5[0] < times[1]);
+}
+
+function getBestScore() {
+  const times = getTopTimes();
+  return times.length > 0 ? times[0] : null;
 }
 
 // ── State Transitions ──
@@ -78,11 +81,12 @@ function showResult(ms) {
   panelText.textContent = 'Your time';
   panelResult.textContent = ms + ' ms';
 
-  const isNew = setBestScore(ms);
+  const prevBest = getBestScore();
+  addTime(ms);
   updateBestScore();
   renderLeaderboard();
 
-  if (isNew) {
+  if (prevBest === null || ms < prevBest) {
     panelText.textContent = 'New best!';
   }
 }
@@ -126,25 +130,22 @@ function updateBestScore() {
 
 // ── Leaderboard ──
 function renderLeaderboard() {
-  const best = getBestScore();
-  const entries = [...mockPlayers];
+  const times = getTopTimes();
 
-  if (best !== null) {
-    entries.push({ name: 'You', time: best, isUser: true });
+  if (times.length === 0) {
+    leaderboardList.innerHTML =
+      '<li class="leaderboard-empty">Play to set your first time!</li>';
+    return;
   }
 
-  entries.sort((a, b) => a.time - b.time);
-
-  // Keep top 6
-  const top = entries.slice(0, 6);
-
-  leaderboardList.innerHTML = top
-    .map((entry) => {
-      const cls = entry.isUser ? ' leaderboard-item--you' : '';
+  leaderboardList.innerHTML = times
+    .map((time, i) => {
+      const rank = i + 1;
+      const label = rank === 1 ? 'Fastest' : '#' + rank;
       return (
-        '<li class="leaderboard-item' + cls + '">' +
-        '<span class="leaderboard-name">' + entry.name + '</span>' +
-        '<span class="leaderboard-time">' + entry.time + ' ms</span>' +
+        '<li class="leaderboard-item leaderboard-item--' + rank + '">' +
+        '<span class="leaderboard-name">' + label + '</span>' +
+        '<span class="leaderboard-time">' + time + ' ms</span>' +
         '</li>'
       );
     })
